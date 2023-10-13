@@ -1,2 +1,6 @@
 venv/
+<<<<<<< HEAD
 config/
+=======
+.venv/
+>>>>>>> cd71d13eaaaafadf70ffe79f25f8676d4f93938b
