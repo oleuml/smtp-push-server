@@ -29,17 +29,25 @@ class PushHandler:
 
     if type(messages) == list:
       for message in messages:
+        message: Message = message
+        payload = message.get_payload()
+        if message.get('Content-Transfer-Encoding') == 'base64':
+          payload = base64.b64decode(payload)
         requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
-        data=message.get_payload(),
-        headers={
-            "Title": email_content.get("subject"),
-            "Priority": "urgent",
-            "Tags": "warning,skull",
-            "Filename": message.get_filename()
-        })
+          data=payload,
+          headers={
+              "Title": email_content.get("subject"),
+              "Priority": "urgent",
+              "Tags": "warning,skull",
+              "Filename": message.get_filename()
+          })
+
     else:
+      payload = messages
+      if message.get('Content-Transfer-Encoding') == 'base64':
+        payload = base64.b64decode(payload)
       requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
-        data=messages,
+        data=payload,
         headers={
             "Title": email_content.get("subject"),
             "Priority": "urgent",
