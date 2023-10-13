@@ -31,6 +31,7 @@ class PushHandler:
       for message in messages:
         message: Message = message
         payload = message.get_payload()
+        print(message.get('Content-Transfer-Encoding'))
         if message.get('Content-Transfer-Encoding') == 'base64':
           payload = base64.b64decode(payload)
         requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
