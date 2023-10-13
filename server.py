@@ -45,7 +45,7 @@ class PushHandler:
 
     else:
       payload = messages
-      if message.get('Content-Transfer-Encoding') == 'base64':
+      if email_content.get('Content-Transfer-Encoding') == 'base64':
         payload = base64.b64decode(payload)
       requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
         data=payload,
