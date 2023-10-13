@@ -22,18 +22,27 @@ class PushHandler:
 
   async def handle_DATA(self, server: SMTPServer, session: SMTPSession, envelope: SMTPEnvelope):
     email_content = email.message_from_bytes(envelope.content)
-    messages: Message = email_content.get_payload()
-    
-    for message in messages:
-      
+    messages: [Message] | str = email_content.get_payload()
+
+    if type(messages) == list:
+      for message in messages:
+        requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
+        data=message.get_payload(),
+        headers={
+            "Title": email_content.get("subject"),
+            "Priority": "urgent",
+            "Tags": "warning,skull",
+            "Filename": message.get_filename()
+        })
+    else:
       requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
-      data=message.get_payload(),
-      headers={
-          "Title": email_content.get("subject"),
-          "Priority": "urgent",
-          "Tags": "warning,skull",
-          "Filename": message.get_filename()
-      })
+        data=messages,
+        headers={
+            "Title": email_content.get("subject"),
+            "Priority": "urgent",
+            "Tags": "warning,skull",
+        })
+
 
     return '250 Message accepted for delivery'
 
