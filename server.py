@@ -6,13 +6,13 @@ import requests
 import base64
 
 from dotenv import dotenv_values
-
 from aiosmtpd.controller import Controller
 from aiosmtpd.smtp import SMTP as SMTPServer
 from aiosmtpd.smtp import Envelope as SMTPEnvelope
 from aiosmtpd.smtp import Session as SMTPSession
 from email.message import Message
 
+from utils import parse_ntfy_url
 
 global config
 
@@ -24,6 +24,7 @@ class PushHandler:
     return '250 OK'
 
   async def handle_DATA(self, server: SMTPServer, session: SMTPSession, envelope: SMTPEnvelope):
+    NTFY_URL = parse_ntfy_url(config.get("NTFY_HOST"), config.get("NTFY_TOPIC"))
     email_content = email.message_from_bytes(envelope.content)
     messages: [Message] | str = email_content.get_payload()
 
@@ -34,7 +35,7 @@ class PushHandler:
         print(message.get('Content-Transfer-Encoding'))
         if message.get('Content-Transfer-Encoding') == 'base64':
           payload = base64.b64decode(payload)
-        requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
+        requests.post(NTFY_URL,
           data=payload,
           headers={
               "Title": email_content.get("subject"),
@@ -47,7 +48,7 @@ class PushHandler:
       payload = messages
       if email_content.get('Content-Transfer-Encoding') == 'base64':
         payload = base64.b64decode(payload)
-      requests.post("https://ntfy.sh/fabiundoletestenunifiedpushundntfy",
+      requests.post(NTFY_URL,
         data=payload,
         headers={
             "Title": email_content.get("subject"),
