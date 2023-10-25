@@ -14,6 +14,9 @@ from email.message import Message
 
 from utils import parse_ntfy_url
 
+from mapper import mail_to_ntfy_format
+from notification import Notification
+
 global config
 
 class PushHandler:
@@ -26,36 +29,12 @@ class PushHandler:
   async def handle_DATA(self, server: SMTPServer, session: SMTPSession, envelope: SMTPEnvelope):
     NTFY_URL = parse_ntfy_url(config.get("NTFY_HOST"), config.get("NTFY_TOPIC"))
     email_content = email.message_from_bytes(envelope.content)
+    
     messages: [Message] | str = email_content.get_payload()
 
-    if type(messages) == list:
-      for message in messages:
-        message: Message = message
-        payload = message.get_payload()
-        print(message.get('Content-Transfer-Encoding'))
-        if message.get('Content-Transfer-Encoding') == 'base64':
-          payload = base64.b64decode(payload)
-        requests.post(NTFY_URL,
-          data=payload,
-          headers={
-              "Title": email_content.get("subject"),
-              "Priority": "urgent",
-              "Tags": "warning,skull",
-              "Filename": message.get_filename()
-          })
-
-    else:
-      payload = messages
-      if email_content.get('Content-Transfer-Encoding') == 'base64':
-        payload = base64.b64decode(payload)
-      requests.post(NTFY_URL,
-        data=payload,
-        headers={
-            "Title": email_content.get("subject"),
-            "Priority": "urgent",
-            "Tags": "warning,skull",
-        })
-
+    notifications: [Notification] = mail_to_ntfy_format(email_content)    
+    for n in notifications:
+      requests.post(NTFY_URL, data=n.data, headers=n.headers)
 
     return '250 Message accepted for delivery'
 
