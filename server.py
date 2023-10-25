@@ -39,7 +39,7 @@ class PushHandler:
     return '250 Message accepted for delivery'
 
 async def main(loop):
-  cont = Controller(PushHandler(), hostname=config["HOST"], port=1025)
+  cont = Controller(PushHandler(), hostname=config["HOST"], port=config["PORT"])
   cont.start()
 
 
