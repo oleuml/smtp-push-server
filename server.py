@@ -32,7 +32,7 @@ class PushHandler:
     
     messages: [Message] | str = email_content.get_payload()
 
-    notifications: [Notification] = mail_to_ntfy_format(email_content)    
+    notifications: [Notification] = mail_to_ntfy_format(email_content, MailType(config["TYPE"]))    
     for n in notifications:
       requests.post(NTFY_URL, data=n.data, headers=n.headers)
 

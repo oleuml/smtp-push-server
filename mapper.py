@@ -16,7 +16,6 @@ class MailType:
 STANDARD = MailType('standard')
 REOLINK = MailType('reolink')
 
-
 def mail_to_ntfy_format(message: Message, mail_type: MailType) -> [Notification]:
   match mail_type.mail_type:
     case STANDARD.mail_type:
@@ -47,4 +46,3 @@ def _reolink_to_ntfy(message: Message):
 
   return notifications
   
-test = mail_to_ntfy_format(None, REOLINK)

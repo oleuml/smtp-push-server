@@ -3,7 +3,3 @@ class Notification():
     self.data = data
     self.headers = headers
 
-
-x = Notification("test", {"a": "b"})
-print(x.data)
-  
