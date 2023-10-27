@@ -59,7 +59,7 @@ if __name__ == '__main__':
   ntfy_url = parse_ntfy_url(config.get("NTFY_HOST"), config.get("NTFY_TOPIC"))
   logging.basicConfig(level=logging.DEBUG)
 
-  register_notification = Notification(data=f"SMTP SinkPush User '{username}' authorized!", headers={"Title": "SMTP SinkPush Server"})
+  register_notification = Notification(data=f"SMTP SinkPush User '{username}' online!", headers={"Title": "SMTP SinkPush Server", "Tags": "rocket"})
   response = send_notfication(register_notification, ntfy_url, username, password)
   if response.status_code >= 400:
     logging.error(msg=f"{response.status_code}: {response.reason}")
