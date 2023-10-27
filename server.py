@@ -53,7 +53,7 @@ async def main(loop):
 
 if __name__ == '__main__':
   config = dotenv_values("config/.env")
-  mail_type = MailType(config["TYPE"])
+  mail_type = MailType(config["MAIL_TYPE"])
   username = config['NTFY_USER']
   password = config['NTFY_PASSWORD']
   ntfy_url = parse_ntfy_url(config.get("NTFY_HOST"), config.get("NTFY_TOPIC"))
