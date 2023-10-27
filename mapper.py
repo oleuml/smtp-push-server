@@ -1,5 +1,6 @@
 from email.message import Message
 from notification import Notification
+import base64
 
 SUPPORTED_MAIL_TYPES = ['standard', 'reolink']
 
@@ -29,20 +30,20 @@ def _standard_to_ntfy(message: Message) -> [Notification]:
   return [Notification(message.get_payload(), {})]
 
 def _reolink_to_ntfy(message: Message):
+  messages: [Message] | str = message.get_payload()
+
   notifications = []
   if type(messages) == list:
-    for message in messages:
-      message: Message = message
-      payload = message.get_payload()
-      print(message.get('Content-Transfer-Encoding'))
-      if message.get('Content-Transfer-Encoding') == 'base64':
+    for _message in messages:
+      payload = _message.get_payload()
+      if _message.get('Content-Transfer-Encoding') == 'base64':
         payload = base64.b64decode(payload)
-      notifications.append(Notification(payload, {"Title": email_content.get("subject"), "Priority": "urgent", "Tags": "warning,skull", "Filename": message.get_filename()}))
+      notifications.append(Notification(payload, {"Title": message.get("subject"), "Priority": "urgent", "Tags": "warning,skull", "Filename": _message.get_filename()}))
   else:
     payload = messages
-    if email_content.get('Content-Transfer-Encoding') == 'base64':
+    if payload.get('Content-Transfer-Encoding') == 'base64':
       payload = base64.b64decode(payload)
-    notifications.append(Notification(payload, {"Title": email_content.get("subject"), "Priority": "urgent", "Tags": "warning,skull" }))
+    notifications.append(Notification(payload, {"Title": message.get("subject"), "Priority": "urgent", "Tags": "warning,skull" }))
 
   return notifications
   

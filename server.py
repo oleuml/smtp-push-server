@@ -3,7 +3,6 @@ import asyncio
 import logging
 import email
 import requests
-import base64
 
 from dotenv import dotenv_values
 from aiosmtpd.controller import Controller
@@ -14,7 +13,7 @@ from email.message import Message
 
 from utils import parse_ntfy_url
 
-from mapper import mail_to_ntfy_format
+from mapper import mail_to_ntfy_format, MailType
 from notification import Notification
 
 global config
@@ -30,8 +29,6 @@ class PushHandler:
     NTFY_URL = parse_ntfy_url(config.get("NTFY_HOST"), config.get("NTFY_TOPIC"))
     email_content = email.message_from_bytes(envelope.content)
     
-    messages: [Message] | str = email_content.get_payload()
-
     notifications: [Notification] = mail_to_ntfy_format(email_content, MailType(config["TYPE"]))    
     for n in notifications:
       requests.post(NTFY_URL, data=n.data, headers=n.headers)
