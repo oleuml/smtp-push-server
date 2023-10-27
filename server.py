@@ -36,7 +36,7 @@ class PushHandler:
     
     notifications: [Notification] = mail_to_ntfy_format(email_content, mail_type=mail_type)    
     for n in notifications:
-      send_notfication(n, username, password)
+      send_notfication(notification=n, url=ntfy_url, username=username, password=password)
     return '250 Message accepted for delivery'
 
 def send_notfication(notification: Notification, url: str, username: str, password: str) -> requests.Response:
