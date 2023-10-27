@@ -17,6 +17,7 @@ from mapper import mail_to_ntfy_format, MailType
 from notification import Notification
 
 global config
+global mail_type
 
 class PushHandler:
   async def handle_RCPT(self, server, session, envelope, address, rcpt_options):
@@ -29,7 +30,7 @@ class PushHandler:
     NTFY_URL = parse_ntfy_url(config.get("NTFY_HOST"), config.get("NTFY_TOPIC"))
     email_content = email.message_from_bytes(envelope.content)
     
-    notifications: [Notification] = mail_to_ntfy_format(email_content, MailType(config["TYPE"]))    
+    notifications: [Notification] = mail_to_ntfy_format(email_content, mail_type=mail_type)    
     for n in notifications:
       requests.post(NTFY_URL, data=n.data, headers=n.headers)
 
@@ -42,6 +43,8 @@ async def main(loop):
 
 if __name__ == '__main__':
   config = dotenv_values("config/.env")
+  mail_type = MailType(config["TYPE"])
+
   logging.basicConfig(level=logging.DEBUG)
   loop = asyncio.get_event_loop()
   loop.create_task(main(loop=loop))
