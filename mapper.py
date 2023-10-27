@@ -18,12 +18,11 @@ STANDARD = MailType('standard')
 REOLINK = MailType('reolink')
 
 def mail_to_ntfy_format(message: Message, mail_type: MailType) -> [Notification]:
-  match mail_type.mail_type:
-    case STANDARD.mail_type:
+  if mail_type.mail_type == STANDARD.mail_type:
       return _standard_to_ntfy(message)
-    case REOLINK.mail_type:
+  elif mail_type.mail_type == REOLINK.mail_type:
       return _reolink_to_ntfy(message)
-    case _:
+  else:
       raise Exception(f"Unknown mail type. MailType must be one of these: {SUPPORTED_MAIL_TYPES}")
 
 def _standard_to_ntfy(message: Message) -> [Notification]:
